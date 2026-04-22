@@ -43,7 +43,7 @@ const Auth = () => {
       password: fd.get("password"),
       confirm: fd.get("confirm"),
     });
-    if (!parsed.success) return toast.error(parsed.error.errors[0].message);
+    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email: parsed.data.email,
@@ -62,7 +62,7 @@ const Auth = () => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const parsed = signInSchema.safeParse({ email: fd.get("email"), password: fd.get("password") });
-    if (!parsed.success) return toast.error(parsed.error.errors[0].message);
+    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword(parsed.data);
     setBusy(false);

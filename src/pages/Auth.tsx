@@ -97,8 +97,8 @@ const Auth = () => {
             <TabsContent value="signin" className="mt-5">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="si-email">Email</Label>
-                  <Input id="si-email" name="email" type="email" placeholder="you@example.com" required />
+                  <Label htmlFor="si-username">Username</Label>
+                  <Input id="si-username" name="username" placeholder="admin" autoComplete="username" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="si-password">Password</Label>
@@ -115,10 +115,6 @@ const Auth = () => {
                 <div className="space-y-2">
                   <Label htmlFor="su-username">Username</Label>
                   <Input id="su-username" name="username" placeholder="johndoe" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="su-email">Email</Label>
-                  <Input id="su-email" name="email" type="email" placeholder="you@example.com" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="su-password">Password</Label>

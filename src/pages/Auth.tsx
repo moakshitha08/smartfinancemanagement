@@ -14,16 +14,18 @@ import { toast } from "sonner";
 const signUpSchema = z
   .object({
     username: z.string().trim().min(3, "Username must be at least 3 chars").max(30),
-    email: z.string().trim().email("Invalid email").max(255),
     password: z.string().min(6, "Password must be at least 6 characters").max(72),
     confirm: z.string(),
   })
   .refine((d) => d.password === d.confirm, { message: "Passwords do not match", path: ["confirm"] });
 
 const signInSchema = z.object({
-  email: z.string().trim().email("Enter a valid email").max(255),
+  username: z.string().trim().min(3, "Enter your username").max(30),
   password: z.string().min(1, "Password required").max(72),
 });
+
+// Username -> synthetic email mapping (Supabase requires email under the hood)
+const usernameToEmail = (u: string) => `${u.trim().toLowerCase()}@app.local`;
 
 const Auth = () => {
   const nav = useNavigate();
@@ -39,14 +41,15 @@ const Auth = () => {
     const fd = new FormData(e.currentTarget);
     const parsed = signUpSchema.safeParse({
       username: fd.get("username"),
-      email: fd.get("email"),
       password: fd.get("password"),
       confirm: fd.get("confirm"),
     });
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
+    if (!/^[a-zA-Z0-9_.-]+$/.test(parsed.data.username))
+      return toast.error("Username can only contain letters, numbers, _ . -");
     setBusy(true);
     const { error } = await supabase.auth.signUp({
-      email: parsed.data.email,
+      email: usernameToEmail(parsed.data.username),
       password: parsed.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/app`,
@@ -55,16 +58,19 @@ const Auth = () => {
     });
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created! You're signed in.");
+    toast.success("Account created! You can sign in now.");
   };
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const parsed = signInSchema.safeParse({ email: fd.get("email"), password: fd.get("password") });
+    const parsed = signInSchema.safeParse({ username: fd.get("username"), password: fd.get("password") });
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: usernameToEmail(parsed.data.username),
+      password: parsed.data.password,
+    });
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back!");

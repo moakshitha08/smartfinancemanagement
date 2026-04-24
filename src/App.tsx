@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/app/Dashboard";
 import Income from "./pages/app/Income";
@@ -29,8 +28,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/" element={<Auth />} />
+            <Route path="/auth" element={<Navigate to="/" replace />} />
             <Route
               path="/app"
               element={

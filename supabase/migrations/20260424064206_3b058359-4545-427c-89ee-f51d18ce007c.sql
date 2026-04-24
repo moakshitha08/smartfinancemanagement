@@ -1,0 +1,2 @@
+UPDATE auth.users SET email_confirmed_at = now() WHERE email_confirmed_at IS NULL;
+INSERT INTO public.profiles (id, username, display_name) VALUES ('cd7fedd5-6d1a-4a4f-b566-95cc8e0bb8a6', 'admin', 'Admin') ON CONFLICT (id) DO UPDATE SET username = 'admin', display_name = 'Admin';

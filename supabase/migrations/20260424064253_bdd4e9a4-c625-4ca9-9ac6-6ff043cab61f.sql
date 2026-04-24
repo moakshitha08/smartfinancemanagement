@@ -1,0 +1,1 @@
+UPDATE auth.users SET email = 'admin@app.local' WHERE id = 'cd7fedd5-6d1a-4a4f-b566-95cc8e0bb8a6';

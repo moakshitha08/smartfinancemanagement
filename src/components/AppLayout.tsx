@@ -26,7 +26,7 @@ const NAV = [
   { to: "/app/reports", label: "Reports", icon: BarChart3 },
   { to: "/app/budget", label: "Budget", icon: Target },
   { to: "/app/alerts", label: "Alerts", icon: Bell },
-  { to: "/app/export", label: "Export PDF", icon: Download },
+  { to: "/app/export", label: "Export & Import", icon: Download },
   { to: "/app/settings", label: "Settings", icon: Settings },
 ];
 

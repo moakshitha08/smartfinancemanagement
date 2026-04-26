@@ -259,11 +259,8 @@ const ExportImport = () => {
 
   const downloadTemplate = async (kind: Kind) => {
     const head = kind === "expense" ? "Date,Category,Amount,Description" : "Date,Source,Amount,Description";
-    const sample =
-      kind === "expense"
-        ? "\n2025-01-15,Reagents & Chemicals,1500,Sample reagents\n2025-01-16,Lab Consumables,350,"
-        : "\n2025-01-15,Test Fees,5000,Sample test\n2025-01-16,Sample Processing,2500,";
-    await deliverFile(`${kind}-template.csv`, "text/csv", head + sample);
+    // Header-only template — no sample/fake data, only real entries belong in the file.
+    await deliverFile(`${kind}-template.csv`, "text/csv", head + "\n");
   };
 
   return (

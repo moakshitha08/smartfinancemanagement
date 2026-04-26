@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useAlerts } from "@/hooks/useAlerts";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -34,6 +35,8 @@ export const AppLayout = () => {
   const { signOut, user } = useAuth();
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
+  const alerts = useAlerts();
+  const alertCount = alerts.length;
 
   const handleLogout = async () => {
     await signOut();
@@ -114,6 +117,18 @@ export const AppLayout = () => {
               Welcome back, <span className="text-foreground font-medium">{user?.email?.split("@")[0]}</span>
             </h1>
           </div>
+          {alertCount > 0 && (
+            <button
+              onClick={() => nav("/app/alerts")}
+              aria-label={`${alertCount} alert${alertCount > 1 ? "s" : ""}`}
+              className="relative p-2 rounded-md hover:bg-muted/50 transition-colors"
+            >
+              <Bell className="h-5 w-5 text-foreground" />
+              <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-expense text-[10px] font-semibold text-primary-foreground flex items-center justify-center shadow-[var(--shadow-glow)]">
+                {alertCount > 9 ? "9+" : alertCount}
+              </span>
+            </button>
+          )}
         </header>
         <main className="flex-1 p-4 lg:p-8 animate-fade">
           <Outlet />

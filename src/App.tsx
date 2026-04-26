@@ -14,7 +14,7 @@ import Transactions from "./pages/app/Transactions";
 import Reports from "./pages/app/Reports";
 import Budget from "./pages/app/Budget";
 import Alerts from "./pages/app/Alerts";
-import ExportPDF from "./pages/app/ExportPDF";
+import ExportImport from "./pages/app/ExportImport";
 import Settings from "./pages/app/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -45,7 +45,7 @@ const App = () => (
               <Route path="reports" element={<Reports />} />
               <Route path="budget" element={<Budget />} />
               <Route path="alerts" element={<Alerts />} />
-              <Route path="export" element={<ExportPDF />} />
+              <Route path="export" element={<ExportImport />} />
               <Route path="settings" element={<Settings />} />
             </Route>
             <Route path="*" element={<NotFound />} />

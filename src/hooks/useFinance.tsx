@@ -56,7 +56,7 @@ export const useFinance = () => {
     setLoading(true);
     refresh();
     const ch = supabase
-      .channel("finance-rt")
+      .channel(`finance-rt-${user.id}-${Math.random().toString(36).slice(2, 8)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "incomes", filter: `user_id=eq.${user.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "expenses", filter: `user_id=eq.${user.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "budgets", filter: `user_id=eq.${user.id}` }, refresh)

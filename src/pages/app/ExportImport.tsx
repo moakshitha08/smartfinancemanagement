@@ -10,6 +10,7 @@ import { Download, FileText, FileSpreadsheet, Upload, Share2 } from "lucide-reac
 import { inrDecimal, formatDate } from "@/lib/format";
 import { toast } from "sonner";
 import { INCOME_SOURCES, EXPENSE_CATEGORIES } from "@/lib/categories";
+import { toUserMessage } from "@/lib/errors";
 
 type Kind = "income" | "expense";
 
@@ -92,7 +93,7 @@ const ExportImport = () => {
       await deliverFile(`budget-report-${Date.now()}.pdf`, "application/pdf", blob);
       toast.success("PDF ready");
     } catch (e: any) {
-      toast.error(e.message ?? "Failed");
+      toast.error(toUserMessage(e, "Export failed. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -251,7 +252,7 @@ const ExportImport = () => {
       await refresh();
       if (fileRef.current) fileRef.current.value = "";
     } catch (e: any) {
-      toast.error(e.message ?? "Import failed");
+      toast.error(toUserMessage(e, "Import failed. Please check your file and try again."));
     } finally {
       setImporting(false);
     }

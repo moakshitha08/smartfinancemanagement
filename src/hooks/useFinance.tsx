@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, createContext, useContext, ReactNode, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
@@ -28,7 +28,20 @@ export interface Budget {
   period_start: string;
 }
 
-export const useFinance = () => {
+interface FinanceCtx {
+  incomes: Income[];
+  expenses: Expense[];
+  budgets: Budget[];
+  totalIncome: number;
+  totalExpense: number;
+  balance: number;
+  loading: boolean;
+  refresh: () => Promise<void>;
+}
+
+const Ctx = createContext<FinanceCtx | null>(null);
+
+export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -56,7 +69,7 @@ export const useFinance = () => {
     setLoading(true);
     refresh();
     const ch = supabase
-      .channel(`finance-rt-${user.id}-${Math.random().toString(36).slice(2, 8)}`, {
+      .channel(`finance-rt-${user.id}`, {
         config: { private: true },
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "incomes", filter: `user_id=eq.${user.id}` }, refresh)
@@ -68,9 +81,33 @@ export const useFinance = () => {
     };
   }, [user, refresh]);
 
-  const totalIncome = incomes.reduce((s, r) => s + r.amount, 0);
-  const totalExpense = expenses.reduce((s, r) => s + r.amount, 0);
-  const balance = totalIncome - totalExpense;
+  const value = useMemo(() => {
+    const totalIncome = incomes.reduce((s, r) => s + r.amount, 0);
+    const totalExpense = expenses.reduce((s, r) => s + r.amount, 0);
+    return {
+      incomes,
+      expenses,
+      budgets,
+      totalIncome,
+      totalExpense,
+      balance: totalIncome - totalExpense,
+      loading,
+      refresh,
+    };
+  }, [incomes, expenses, budgets, loading, refresh]);
 
-  return { incomes, expenses, budgets, totalIncome, totalExpense, balance, loading, refresh };
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };
+
+const EMPTY: FinanceCtx = {
+  incomes: [],
+  expenses: [],
+  budgets: [],
+  totalIncome: 0,
+  totalExpense: 0,
+  balance: 0,
+  loading: true,
+  refresh: async () => {},
+};
+
+export const useFinance = () => useContext(Ctx) ?? EMPTY;

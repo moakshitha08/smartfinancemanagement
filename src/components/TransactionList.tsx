@@ -19,6 +19,7 @@ import { categoryColor } from "@/lib/categories";
 import { toast } from "sonner";
 import { EmptyState } from "./EmptyState";
 import { Inbox } from "lucide-react";
+import { toUserMessage } from "@/lib/errors";
 
 interface Row {
   id: string;
@@ -45,7 +46,7 @@ export const TransactionList = ({
   const remove = async (id: string) => {
     const table = type === "income" ? "incomes" : "expenses";
     const { error } = await supabase.from(table).delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error, "Could not delete. Please try again."));
     toast.success("Deleted");
   };
 

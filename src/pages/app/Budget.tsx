@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { EmptyState } from "@/components/EmptyState";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 import { z } from "zod";
 
 const budgetSchema = z.object({
@@ -65,7 +66,7 @@ const Budget = () => {
         { onConflict: "user_id,category,period_start" },
       );
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error, "Could not save budget."));
     toast.success("Budget saved");
     setAmount("");
     setCategory("");
@@ -73,7 +74,7 @@ const Budget = () => {
 
   const remove = async (id: string) => {
     const { error } = await supabase.from("budgets").delete().eq("id", id);
-    if (error) toast.error(error.message);
+    if (error) toast.error(toUserMessage(error, "Could not remove budget."));
     else toast.success("Removed");
   };
 

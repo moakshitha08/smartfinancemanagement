@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 
 const schema = z.object({
   amount: z.number().positive("Amount must be greater than 0").max(1e10),
@@ -77,7 +78,7 @@ export const TransactionForm = ({ type, trigger, initial, onDone, open, onOpenCh
       : await supabase.from(table).insert(payload);
 
     setBusy(false);
-    if (res.error) return toast.error(res.error.message);
+    if (res.error) return toast.error(toUserMessage(res.error, "Could not save. Please try again."));
     toast.success(initial ? "Updated" : `${type === "income" ? "Income" : "Expense"} added`);
     setOpen(false);
     reset();

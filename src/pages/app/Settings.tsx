@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/PasswordInput";
 import { toast } from "sonner";
 import { z } from "zod";
+import { toUserMessage } from "@/lib/errors";
 
 const Settings = () => {
   const { user } = useAuth();
@@ -44,7 +45,7 @@ const Settings = () => {
     setBusyP(true);
     const { error } = await supabase.from("profiles").update(parsed.data).eq("id", user.id);
     setBusyP(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error, "Could not update profile."));
     toast.success("Profile updated");
   };
 
@@ -54,7 +55,7 @@ const Settings = () => {
     setBusyPw(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusyPw(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error, "Could not update password."));
     setPw("");
     toast.success("Password updated");
   };

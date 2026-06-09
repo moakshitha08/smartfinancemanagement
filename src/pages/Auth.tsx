@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PasswordInput } from "@/components/PasswordInput";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 
 const signUpSchema = z
   .object({
@@ -57,7 +58,7 @@ const Auth = () => {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error, "Could not create account."));
     toast.success("Account created! You can sign in now.");
   };
 
@@ -72,7 +73,7 @@ const Auth = () => {
       password: parsed.data.password,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error, "Invalid username or password."));
     toast.success("Welcome back!");
   };
 

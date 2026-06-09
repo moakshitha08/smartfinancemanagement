@@ -1,22 +1,31 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { FinanceProvider } from "@/hooks/useFinance";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/app/Dashboard";
-import Income from "./pages/app/Income";
-import Expenses from "./pages/app/Expenses";
-import Transactions from "./pages/app/Transactions";
-import Reports from "./pages/app/Reports";
-import Budget from "./pages/app/Budget";
-import Alerts from "./pages/app/Alerts";
-import ExportImport from "./pages/app/ExportImport";
-import Settings from "./pages/app/Settings";
 import NotFound from "./pages/NotFound";
+
+const Dashboard = lazy(() => import("./pages/app/Dashboard"));
+const Income = lazy(() => import("./pages/app/Income"));
+const Expenses = lazy(() => import("./pages/app/Expenses"));
+const Transactions = lazy(() => import("./pages/app/Transactions"));
+const Reports = lazy(() => import("./pages/app/Reports"));
+const Budget = lazy(() => import("./pages/app/Budget"));
+const Alerts = lazy(() => import("./pages/app/Alerts"));
+const ExportImport = lazy(() => import("./pages/app/ExportImport"));
+const Settings = lazy(() => import("./pages/app/Settings"));
+
+const PageFallback = () => (
+  <div className="flex items-center justify-center py-24">
+    <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -34,19 +43,21 @@ const App = () => (
               path="/app"
               element={
                 <ProtectedRoute>
-                  <AppLayout />
+                  <FinanceProvider>
+                    <AppLayout />
+                  </FinanceProvider>
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Dashboard />} />
-              <Route path="income" element={<Income />} />
-              <Route path="expenses" element={<Expenses />} />
-              <Route path="transactions" element={<Transactions />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="budget" element={<Budget />} />
-              <Route path="alerts" element={<Alerts />} />
-              <Route path="export" element={<ExportImport />} />
-              <Route path="settings" element={<Settings />} />
+              <Route index element={<Suspense fallback={<PageFallback />}><Dashboard /></Suspense>} />
+              <Route path="income" element={<Suspense fallback={<PageFallback />}><Income /></Suspense>} />
+              <Route path="expenses" element={<Suspense fallback={<PageFallback />}><Expenses /></Suspense>} />
+              <Route path="transactions" element={<Suspense fallback={<PageFallback />}><Transactions /></Suspense>} />
+              <Route path="reports" element={<Suspense fallback={<PageFallback />}><Reports /></Suspense>} />
+              <Route path="budget" element={<Suspense fallback={<PageFallback />}><Budget /></Suspense>} />
+              <Route path="alerts" element={<Suspense fallback={<PageFallback />}><Alerts /></Suspense>} />
+              <Route path="export" element={<Suspense fallback={<PageFallback />}><ExportImport /></Suspense>} />
+              <Route path="settings" element={<Suspense fallback={<PageFallback />}><Settings /></Suspense>} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
